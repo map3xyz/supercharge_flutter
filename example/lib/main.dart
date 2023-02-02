@@ -1,63 +1,119 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:webview_flutter/webview_flutter.dart';
 
-import 'package:flutter/services.dart';
-import 'package:supercharge_flutter/supercharge_flutter.dart';
+void main() => runApp(const MaterialApp(home: WebViewExample()));
 
-void main() {
-  runApp(const MyApp());
-}
+const String kLocalExamplePage = '''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cdn.jsdelivr.net/gh/map3xyz/supercharge@1.19.5/dist/global/index.js"></script>
+  <link href="https://cdn.jsdelivr.net/gh/map3xyz/supercharge@1.19.5/dist/index.css" rel="stylesheet"></link>
+  <script>
+    const initialize = () => {
+      const supercharge = initMap3Supercharge({
+        anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiMDFkNTNmNzEtZTI5OS00NTIxLWE0NWItNmE4OTA5ZDNjMGQ1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY2ODk4NjIwMywiZXhwIjoxNzAwNTIyMjAzfQ.xvLZT4ZbJyGkt6t2ga2hf-0ZwpG3ag07Gp9pCPL96J8',
+        generateDepositAddress: async (coin, network) => {
+          // generate a deposit address to display to the user
+          // we'll call this callback function before displaying
+          // an address or generating a payment for the user to sign.
+            const depositAddress = await getDepositAddress(coin, network);
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+          return { address: depositAddress };
+        },
+        userId: '<YOUR_END_USER_ID>' // a user identifier (like an email or UUID)
+      });
+      supercharge.open()
+    }
+
+    document.addEventListener('DOMContentLoaded', initialize);
+  </script>
+  <style>
+    html, body {
+    font-size: 42px;
+    }
+  </style>
+</head>
+<body>
+</body>
+</html>
+''';
+
+class WebViewExample extends StatefulWidget {
+  const WebViewExample({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<WebViewExample> createState() => _WebViewExampleState();
 }
 
-class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-  final _superchargeFlutterPlugin = SuperchargeFlutter();
+class _WebViewExampleState extends State<WebViewExample> {
+  late final WebViewController _controller;
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
-  }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      platformVersion =
-          await _superchargeFlutterPlugin.getPlatformVersion() ?? 'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
+    const PlatformWebViewControllerCreationParams params =
+        PlatformWebViewControllerCreationParams();
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
+    final WebViewController controller =
+        WebViewController.fromPlatformCreationParams(params);
 
-    setState(() {
-      _platformVersion = platformVersion;
-    });
+    controller
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            debugPrint('WebView is loading (progress : $progress%)');
+          },
+          onPageStarted: (String url) {
+            debugPrint('Page started loading: $url');
+          },
+          onPageFinished: (String url) {
+            debugPrint('Page finished loading: $url');
+          },
+          onWebResourceError: (WebResourceError error) {
+            debugPrint('''
+Page resource error:
+  code: ${error.errorCode}
+  description: ${error.description}
+  errorType: ${error.errorType}
+  isForMainFrame: ${error.isForMainFrame}
+          ''');
+          },
+          onNavigationRequest: (NavigationRequest request) {
+            if (request.url.startsWith('https://www.youtube.com/')) {
+              debugPrint('blocking navigation to ${request.url}');
+              return NavigationDecision.prevent;
+            }
+            debugPrint('allowing navigation to ${request.url}');
+            return NavigationDecision.navigate;
+          },
+        ),
+      )
+      ..addJavaScriptChannel(
+        'Toaster',
+        onMessageReceived: (JavaScriptMessage message) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message.message)),
+          );
+        },
+      )
+      ..loadRequest(Uri.dataFromString(kLocalExamplePage,
+          mimeType: 'text/html', encoding: Encoding.getByName('utf-8')!));
+
+    _controller = controller;
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Flutter WebView example'),
       ),
+      body: WebViewWidget(controller: _controller),
     );
   }
 }

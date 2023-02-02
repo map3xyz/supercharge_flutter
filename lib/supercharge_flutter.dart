@@ -1,4 +1,3 @@
-
 import 'supercharge_flutter_platform_interface.dart';
 
 class SuperchargeFlutter {
