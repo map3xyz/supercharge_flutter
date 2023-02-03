@@ -27,6 +27,7 @@ const String kLocalExamplePage = '''
     }
 
     document.addEventListener('DOMContentLoaded', initialize);
+    }
   </script>
   <style>
     html, body {
@@ -87,13 +88,6 @@ class _SuperchargeViewState extends State<SuperchargeView> {
         // clearCache: true,
         useShouldOverrideUrlLoading: true,
         supportZoom: false,
-      ),
-      android: AndroidInAppWebViewOptions(
-        useHybridComposition: true,
-        cacheMode: AndroidCacheMode.LOAD_CACHE_ELSE_NETWORK,
-      ),
-      ios: IOSInAppWebViewOptions(
-        allowsInlineMediaPlayback: true,
       ),
     );
 
