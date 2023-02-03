@@ -1,5 +1,5 @@
-import 'dart:collection';
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -12,23 +12,6 @@ const String kLocalExamplePage = '''
 <head>
   <script src="https://api.map3.xyz/console/relay/gh/supercharge/master/dist/global/index.js"></script>
   <link href="https://api.map3.xyz/console/relay/gh/supercharge/master/dist/index.css" rel="stylesheet"></link>
-  <script>
-    const initialize = () => {
-      const supercharge = initMap3Supercharge({
-        anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiMDFkNTNmNzEtZTI5OS00NTIxLWE0NWItNmE4OTA5ZDNjMGQ1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY2ODk4NjIwMywiZXhwIjoxNzAwNTIyMjAzfQ.xvLZT4ZbJyGkt6t2ga2hf-0ZwpG3ag07Gp9pCPL96J8',
-        generateDepositAddress: async (coin, network) => {
-            const depositAddress = await getDepositAddress(coin, network);
-
-          return { address: depositAddress };
-        },
-        userId: '<YOUR_END_USER_ID>' // a user identifier (like an email or UUID)
-      });
-      supercharge.open()
-    }
-
-    document.addEventListener('DOMContentLoaded', initialize);
-    }
-  </script>
   <style>
     html, body {
     font-size: 54px;
@@ -40,19 +23,6 @@ const String kLocalExamplePage = '''
 </html>
 ''';
 
-String _superchargeEmbedUrl({
-  required String websiteId,
-  required String locale,
-  String? userToken,
-}) {
-  String url = '$map3BaseUrl/static?website_id=$websiteId';
-
-  url += '&locale=$locale';
-  if (userToken != null) url += '&token_id=$userToken';
-
-  return url;
-}
-
 /// The main widget handles deposits and payments
 class SuperchargeView extends StatefulWidget {
   /// Model with main settings
@@ -63,7 +33,7 @@ class SuperchargeView extends StatefulWidget {
   ///this can prevent a white flash on initialization. The default value is false.
   final bool transparentBackground;
   @override
-  _SuperchargeViewState createState() => _SuperchargeViewState();
+  State<SuperchargeView> createState() => _SuperchargeViewState();
 
   const SuperchargeView({
     super.key,
@@ -91,16 +61,22 @@ class _SuperchargeViewState extends State<SuperchargeView> {
       ),
     );
 
-    _javascriptString = """
-      var a = setInterval(function(){
-        if (typeof \$supercharge !== 'undefined'){
-          ${widget.superchargeMain.commands.join(';\n')}
-          clearInterval(a);
-        }
-      },500)
-      """;
+    var superchargeConfig = widget.superchargeMain;
+    _javascriptString = '''
+      const supercharge = initMap3Supercharge({
+        anonKey: '${superchargeConfig.anonKey}',
+        userId: '${superchargeConfig.userId}',
+        theme: '${superchargeConfig.theme}',
+        
+        generateDepositAddress: async (coin, network) => {
+            const depositAddress = await getDepositAddress(coin, network);
 
-    widget.superchargeMain.commands.clear();
+          return { address: depositAddress };
+        },
+        
+      });
+      supercharge.open();
+      ''';
   }
 
   @override
@@ -117,6 +93,10 @@ class _SuperchargeViewState extends State<SuperchargeView> {
         url: Uri.dataFromString(kLocalExamplePage,
             mimeType: 'text/html', encoding: Encoding.getByName('utf-8')!),
       ),
+      // initialUrlRequest: URLRequest(
+      //   url: Uri.parse(
+      //       'https://map3.xyz/hosted/84f0c666-7f22-4d2f-900d-dc90707e6cb0'),
+      // ),
       initialOptions: _options,
       onWebViewCreated: (InAppWebViewController controller) {
         _webViewController = controller;
@@ -137,22 +117,23 @@ class _SuperchargeViewState extends State<SuperchargeView> {
 /// The main model for the [SuperchargeView]
 class SuperchargeMain {
   SuperchargeMain({
-    required this.websiteId,
+    required this.anonKey,
+    required this.userId,
+    this.theme = 'light',
     this.locale = 'en',
-    this.userToken,
   });
 
-  /// The customer website id
-  final String websiteId;
+  /// Your anonKey from the Map3 console
+  final String anonKey;
+
+  /// A user identifier (like an email or UUID)
+  String userId;
+
+  /// Theme for the supercharge SDK, defaults to 'light'
+  String theme = 'light';
 
   /// Locale to define in which language the supercharge SDK should appear
   String locale = 'en';
-
-  /// The token of the user
-  String? userToken;
-
-  /// Commands which are defined on [register] and executed on [SuperchargeView] initState
-  Queue commands = Queue<String>();
 
   setMessage(String text) {
     appendScript(
@@ -160,6 +141,6 @@ class SuperchargeMain {
   }
 
   void appendScript(String script) {
-    commands.add(script);
+    // commands.add(script);
   }
 }

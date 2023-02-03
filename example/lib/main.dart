@@ -18,8 +18,11 @@ class _MyAppState extends State<MyApp> {
     super.initState();
 
     superchargeMain = SuperchargeMain(
-      websiteId: 'WEBSITE_ID',
-      locale: 'pt-br',
+      anonKey: 'ANON_KEY',
+      userId: 'USER_ID',
+      // optional parameters with their default values
+      theme: 'light',
+      locale: 'en',
     );
 
     superchargeMain.setMessage("Hello world");
