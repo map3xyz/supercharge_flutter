@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void main() => runApp(const MaterialApp(home: WebViewExample()));
@@ -36,6 +37,10 @@ const String kLocalExamplePage = '''
   </style>
 </head>
 <body>
+// <a href="javascript:initialize()">Open Supercharge</a><br>
+// <a href="https://link.trustwallet.com/send?asset=c60_t0x6B175474E89094C44Da98b954EedeAC495271d0F&address=0x650b5e446edabad7eba7fa7bb2f6119b2630bfbb&amount=13&memo=test">Send 1 DAI to 0x650b5e446edabad7eba7fa7bb2f6119b2630bfbb</a><br>
+// https://app.binance.com/payment/secpay?_dp=xxx=&linkToken=xxx
+// https://app.binance.com/payment/secpay?linkToken=05511085ea4d404c9d69da5c69acdf66&_dp=Ym5jOi8vYXBwLmJpbmFuY2UuY29tL3BheW1lbnQvc2VjcGF5P3RlbXBUb2tlbj1RcjJJdDVuR2ROaDF4RmFMMG1CQUJsdnpoTG9wcUxxRiZyZXR1cm5MaW5rPWh0dHBzOi8vbGl0dGlvLmlvJmNhbmNlbExpbms9aHR0cHM6Ly9saXR0aW8uaW8
 </body>
 </html>
 ''';
@@ -83,13 +88,17 @@ Page resource error:
   isForMainFrame: ${error.isForMainFrame}
           ''');
           },
-          onNavigationRequest: (NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
-              debugPrint('blocking navigation to ${request.url}');
+          onNavigationRequest: (NavigationRequest request) async {
+            if (request.url.startsWith('https://link.trustwallet.com') ||
+                request.url.startsWith('https://app.binance.com')) {
+              debugPrint('intercepting navigation to ${request.url}');
+
+              await _launchUrl(request.url);
               return NavigationDecision.prevent;
             }
-            debugPrint('allowing navigation to ${request.url}');
-            return NavigationDecision.navigate;
+
+            debugPrint('no external navigation allowed to ${request.url}');
+            return NavigationDecision.prevent;
           },
         ),
       )
@@ -107,11 +116,18 @@ Page resource error:
     _controller = controller;
   }
 
+  _launchUrl(String url) async {
+    if (!await launchUrl(Uri.parse(url),
+        mode: LaunchMode.externalApplication)) {
+      debugPrint('could not launch $url');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flutter WebView example'),
+        title: const Text('Map3WebView example'),
       ),
       body: WebViewWidget(controller: _controller),
     );
