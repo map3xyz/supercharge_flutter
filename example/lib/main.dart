@@ -1,4 +1,4 @@
-import 'package:supercharge_flutter/supercharge_flutter.dart';
+import 'package:supercharge_flutter/supercharge.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());

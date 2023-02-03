@@ -10,16 +10,13 @@ const String kLocalExamplePage = '''
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="https://cdn.jsdelivr.net/gh/map3xyz/supercharge@1.19.5/dist/global/index.js"></script>
-  <link href="https://cdn.jsdelivr.net/gh/map3xyz/supercharge@1.19.5/dist/index.css" rel="stylesheet"></link>
+  <script src="https://api.map3.xyz/console/relay/gh/supercharge/master/dist/global/index.js"></script>
+  <link href="https://api.map3.xyz/console/relay/gh/supercharge/master/dist/index.css" rel="stylesheet"></link>
   <script>
     const initialize = () => {
       const supercharge = initMap3Supercharge({
         anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiMDFkNTNmNzEtZTI5OS00NTIxLWE0NWItNmE4OTA5ZDNjMGQ1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY2ODk4NjIwMywiZXhwIjoxNzAwNTIyMjAzfQ.xvLZT4ZbJyGkt6t2ga2hf-0ZwpG3ag07Gp9pCPL96J8',
         generateDepositAddress: async (coin, network) => {
-          // generate a deposit address to display to the user
-          // we'll call this callback function before displaying
-          // an address or generating a payment for the user to sign.
             const depositAddress = await getDepositAddress(coin, network);
 
           return { address: depositAddress };
@@ -33,15 +30,11 @@ const String kLocalExamplePage = '''
   </script>
   <style>
     html, body {
-    font-size: 84px;
+    font-size: 54px;
     }
   </style>
 </head>
 <body>
-// <a href="javascript:initialize()">Open Supercharge</a><br>
-// <a href="https://link.trustwallet.com/send?asset=c60_t0x6B175474E89094C44Da98b954EedeAC495271d0F&address=0x650b5e446edabad7eba7fa7bb2f6119b2630bfbb&amount=13&memo=test">Send 1 DAI to 0x650b5e446edabad7eba7fa7bb2f6119b2630bfbb</a><br>
-// https://app.binance.com/payment/secpay?_dp=xxx=&linkToken=xxx
-// https://app.binance.com/payment/secpay?linkToken=05511085ea4d404c9d69da5c69acdf66&_dp=Ym5jOi8vYXBwLmJpbmFuY2UuY29tL3BheW1lbnQvc2VjcGF5P3RlbXBUb2tlbj1RcjJJdDVuR2ROaDF4RmFMMG1CQUJsdnpoTG9wcUxxRiZyZXR1cm5MaW5rPWh0dHBzOi8vbGl0dGlvLmlvJmNhbmNlbExpbms9aHR0cHM6Ly9saXR0aW8uaW8
 </body>
 </html>
 ''';
@@ -64,8 +57,6 @@ class SuperchargeView extends StatefulWidget {
   /// Model with main settings
   final SuperchargeMain superchargeMain;
 
-  final void Function(String url)? onLinkPressed;
-
   ///Set to true to make the background of the InAppWebView transparent.
   ///If your app has a dark theme,
   ///this can prevent a white flash on initialization. The default value is false.
@@ -76,7 +67,6 @@ class SuperchargeView extends StatefulWidget {
   const SuperchargeView({
     super.key,
     required this.superchargeMain,
-    this.onLinkPressed,
     this.transparentBackground = false,
   });
 }
@@ -143,29 +133,8 @@ class _SuperchargeViewState extends State<SuperchargeView> {
       shouldOverrideUrlLoading: (controller, navigationAction) async {
         var uri = navigationAction.request.url;
 
-        if (uri?.host != 'map3.xyz') {
-          if ([
-            "http",
-            "https",
-            "tel",
-            "mailto",
-            "file",
-            "chrome",
-            "data",
-            "javascript",
-          ].contains(uri?.scheme)) {
-            if (await canLaunchUrl(uri!)) {
-              if (widget.onLinkPressed != null) {
-                widget.onLinkPressed!(uri.toString());
-              } else {
-                await launchUrl(uri);
-              }
-              return NavigationActionPolicy.CANCEL;
-            }
-          }
-        }
-
-        return NavigationActionPolicy.ALLOW;
+        await launchUrl(uri!, mode: LaunchMode.externalApplication);
+        return NavigationActionPolicy.CANCEL;
       },
     );
   }
