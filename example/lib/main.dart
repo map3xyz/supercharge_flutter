@@ -1,5 +1,5 @@
-import 'package:supercharge_flutter/supercharge.dart';
 import 'package:flutter/material.dart';
+import 'package:supercharge_flutter/supercharge.dart';
 
 void main() => runApp(const MyApp());
 
@@ -11,21 +11,22 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late SuperchargeMain superchargeMain;
+  late SuperchargeConfig superchargeMain;
 
   @override
   void initState() {
     super.initState();
 
-    superchargeMain = SuperchargeMain(
+    superchargeMain = SuperchargeConfig(
       anonKey: 'ANON_KEY',
       userId: 'USER_ID',
+      getDepositAddress: (coin, network) async {
+        return 'ADDRESS';
+      },
       // optional parameters with their default values
       theme: 'light',
       locale: 'en',
     );
-
-    superchargeMain.setMessage("Hello world");
   }
 
   @override
@@ -36,7 +37,7 @@ class _MyAppState extends State<MyApp> {
           toolbarHeight: 0,
         ),
         body: SuperchargeView(
-          superchargeMain: superchargeMain,
+          superchargeConfig: superchargeMain,
         ),
       ),
     );

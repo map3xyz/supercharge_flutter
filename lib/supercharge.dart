@@ -23,21 +23,21 @@ const String kLocalExamplePage = '''
 </html>
 ''';
 
-/// The main widget handles deposits and payments
+/// The supercharge widget handles deposits and payments
 class SuperchargeView extends StatefulWidget {
-  /// Model with main settings
-  final SuperchargeMain superchargeMain;
+  /// Model with config
+  final SuperchargeConfig superchargeConfig;
 
-  ///Set to true to make the background of the InAppWebView transparent.
-  ///If your app has a dark theme,
-  ///this can prevent a white flash on initialization. The default value is false.
+  /// Set to true to make the background of the InAppWebView transparent.
+  /// If your app has a dark theme,
+  /// this can prevent a white flash on initialization. The default value is false.
   final bool transparentBackground;
   @override
   State<SuperchargeView> createState() => _SuperchargeViewState();
 
   const SuperchargeView({
     super.key,
-    required this.superchargeMain,
+    required this.superchargeConfig,
     this.transparentBackground = false,
   });
 }
@@ -61,19 +61,22 @@ class _SuperchargeViewState extends State<SuperchargeView> {
       ),
     );
 
-    var superchargeConfig = widget.superchargeMain;
+    var superchargeConfig = widget.superchargeConfig;
     _javascriptString = '''
+      async function getDepositAddress(coin, network) {
+        return window.flutter_inappwebview.callHandler('getDepositAddress', coin, network);
+      }
+
       const supercharge = initMap3Supercharge({
         anonKey: '${superchargeConfig.anonKey}',
         userId: '${superchargeConfig.userId}',
         theme: '${superchargeConfig.theme}',
         
         generateDepositAddress: async (coin, network) => {
-            const depositAddress = await getDepositAddress(coin, network);
+          const depositAddress = await getDepositAddress(coin, network);
 
           return { address: depositAddress };
         },
-        
       });
       supercharge.open();
       ''';
@@ -82,13 +85,6 @@ class _SuperchargeViewState extends State<SuperchargeView> {
   @override
   Widget build(BuildContext context) {
     return InAppWebView(
-      // initialUrlRequest: URLRequest(
-      //   url: Uri.parse(_superchargeEmbedUrl(
-      //     websiteId: widget.superchargeMain.websiteId,
-      //     locale: widget.superchargeMain.locale,
-      //     userToken: widget.superchargeMain.userToken,
-      //   )),
-      // ),
       initialUrlRequest: URLRequest(
         url: Uri.dataFromString(kLocalExamplePage,
             mimeType: 'text/html', encoding: Encoding.getByName('utf-8')!),
@@ -100,6 +96,12 @@ class _SuperchargeViewState extends State<SuperchargeView> {
       initialOptions: _options,
       onWebViewCreated: (InAppWebViewController controller) {
         _webViewController = controller;
+        controller.addJavaScriptHandler(
+            handlerName: 'getDepositAddress',
+            callback: (args) {
+              return widget.superchargeConfig
+                  .getDepositAddress(args[0], args[1]);
+            });
       },
       onLoadStop: (InAppWebViewController controller, Uri? url) async {
         _webViewController?.evaluateJavascript(source: _javascriptString!);
@@ -115,10 +117,11 @@ class _SuperchargeViewState extends State<SuperchargeView> {
 }
 
 /// The main model for the [SuperchargeView]
-class SuperchargeMain {
-  SuperchargeMain({
+class SuperchargeConfig {
+  SuperchargeConfig({
     required this.anonKey,
     required this.userId,
+    required this.getDepositAddress,
     this.theme = 'light',
     this.locale = 'en',
   });
@@ -129,18 +132,13 @@ class SuperchargeMain {
   /// A user identifier (like an email or UUID)
   String userId;
 
+  /// A function that returns a deposit address for a given coin and network
+  final Future<String> Function(dynamic coin, dynamic network)
+      getDepositAddress;
+
   /// Theme for the supercharge SDK, defaults to 'light'
   String theme = 'light';
 
   /// Locale to define in which language the supercharge SDK should appear
   String locale = 'en';
-
-  setMessage(String text) {
-    appendScript(
-        "window.\$supercharge.push([\"set\", \"message:text\", [\"$text\"]])");
-  }
-
-  void appendScript(String script) {
-    // commands.add(script);
-  }
 }
