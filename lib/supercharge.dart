@@ -1,27 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 const map3BaseUrl = 'https://map3.xyz';
-
-const String kLocalExamplePage = '''
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <script src="https://api.map3.xyz/console/relay/gh/supercharge/master/dist/global/index.js"></script>
-  <link href="https://api.map3.xyz/console/relay/gh/supercharge/master/dist/index.css" rel="stylesheet"></link>
-  <style>
-    html, body {
-    font-size: 54px;
-    }
-  </style>
-</head>
-<body>
-</body>
-</html>
-''';
 
 /// The supercharge widget handles deposits and payments
 class SuperchargeView extends StatefulWidget {
@@ -67,6 +48,9 @@ class _SuperchargeViewState extends State<SuperchargeView> {
         return window.flutter_inappwebview.callHandler('getDepositAddress', coin, network);
       }
 
+      // TODO - this is a hack to get the theme to work
+      window.document.documentElement.className = '${superchargeConfig.theme}';
+
       const supercharge = initMap3Supercharge({
         anonKey: '${superchargeConfig.anonKey}',
         userId: '${superchargeConfig.userId}',
@@ -86,13 +70,9 @@ class _SuperchargeViewState extends State<SuperchargeView> {
   Widget build(BuildContext context) {
     return InAppWebView(
       initialUrlRequest: URLRequest(
-        url: Uri.dataFromString(kLocalExamplePage,
-            mimeType: 'text/html', encoding: Encoding.getByName('utf-8')!),
+        url: Uri.parse(
+            'https://map3.xyz/hosted/84f0c666-7f22-4d2f-900d-dc90707e6cb0'),
       ),
-      // initialUrlRequest: URLRequest(
-      //   url: Uri.parse(
-      //       'https://map3.xyz/hosted/84f0c666-7f22-4d2f-900d-dc90707e6cb0'),
-      // ),
       // initialUrlRequest: URLRequest(
       //     url: Uri.parse(
       //         '$map3BaseUrl/hosted/${getOrgIdFromJwt(widget.superchargeConfig.anonKey)}')),
