@@ -11,13 +11,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late SuperchargeConfig superchargeMain;
+  late SuperchargeConfig superchargeConfig;
 
   @override
   void initState() {
     super.initState();
 
-    superchargeMain = SuperchargeConfig(
+    superchargeConfig = SuperchargeConfig(
       anonKey: 'ANON_KEY',
       userId: 'USER_ID',
       getDepositAddress: (coin, network) async {
@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> {
           toolbarHeight: 0,
         ),
         body: SuperchargeView(
-          superchargeConfig: superchargeMain,
+          superchargeConfig: superchargeConfig,
         ),
       ),
     );

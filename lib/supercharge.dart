@@ -93,6 +93,9 @@ class _SuperchargeViewState extends State<SuperchargeView> {
       //   url: Uri.parse(
       //       'https://map3.xyz/hosted/84f0c666-7f22-4d2f-900d-dc90707e6cb0'),
       // ),
+      // initialUrlRequest: URLRequest(
+      //     url: Uri.parse(
+      //         '$map3BaseUrl/hosted/${getOrgIdFromJwt(widget.superchargeConfig.anonKey)}')),
       initialOptions: _options,
       onWebViewCreated: (InAppWebViewController controller) {
         _webViewController = controller;
@@ -116,7 +119,7 @@ class _SuperchargeViewState extends State<SuperchargeView> {
   }
 }
 
-/// The main model for the [SuperchargeView]
+/// Config for the [SuperchargeView]
 class SuperchargeConfig {
   SuperchargeConfig({
     required this.anonKey,
