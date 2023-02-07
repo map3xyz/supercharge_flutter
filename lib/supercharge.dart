@@ -150,7 +150,7 @@ class SuperchargeConfig {
   /// They encode your organization ID and a role (anon). Anon key allows read access, but not write.
   final String anonKey;
 
-  /// A user identifier (like an email or UUID)
+  /// A unique identifier for the active user. An email, uuid, or any other unique identifier is required.
   String userId;
 
   /// A function that returns a deposit address for a given coin and network, optional if paymentMethod=binance-pay
@@ -168,17 +168,19 @@ class SuperchargeConfig {
 
   // Either networkCode and address or just networkCode or just assetId or nothing (which means users selects)
 
-  /// If you know the Map3 assetId (e.g [fe2bf2f8-3ddc-4ccc-8f34-8fdd9be03884](https://map3.xyz/network/polygon/0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174) USDC on Polygon) you can pass in the assetId and
-  /// skip directly to payment method selection. If you have more questions about the Map3 assetId please review [Metadata Documentation](https://dash.readme.com/project/map3/v1.0/refs/getting-started-with-your-api).
+  /// If you know the Map3 assetId (e.g [fe2bf2f8-3ddc-4ccc-8f34-8fdd9be03884](https://map3.xyz/network/polygon/0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174)
+  /// USDC on Polygon) you can pass in the assetId and skip directly to payment method selection. If you have more questions about the Map3
+  /// assetId please review [Metadata Documentation](https://dash.readme.com/project/map3/v1.0/refs/getting-started-with-your-api).
   String? assetId;
 
-  /// Pre-select a network
+  /// If the user wants to deposit the native token (e.g Ether on Ethereum) you can pass in a networkCode to skip asset
+  /// and network selection and jump directly to payment method selection.
   String? networkCode;
 
   /// The address of the ERC-20 token for the user to deposit. Must be used with networkCode or defaults to undefined.
   String? address;
 
-  /// Fiat currency for conversion, defaults to USD
+  /// Fiat currency of your user's preference. Default value is USD.
   String? fiat;
 
   /// The amount of crypto in minor units you require the user to deposit.
@@ -187,12 +189,12 @@ class SuperchargeConfig {
   /// Document title: shown when connecting to user's wallet via metamask or walletconnect
   String? appName;
 
-  /// A function that returns a boolean if a transaction is authorized
+  /// An optional callback that gets called before the user is allowed to submit a transaction via their wallet.
   final Future<Bool> Function(
           dynamic fromAddress, dynamic network, dynamic amount)?
       authorizeTransaction;
 
-  /// Colors for the supercharge SDK, e.g. {primary: '#ffffff', accent: '#000000'}
+  /// Change the primary and accent colors, e.g. {primary: '#ffffff', accent: '#000000'}
   Map<String, String>? colors;
 
   /// A function that is called when the payment succeeds
