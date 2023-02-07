@@ -1,10 +1,3 @@
-# Documentation
-
- * [Project README](../README.md)
- * [Map3 Supercharge Documentation](https://map3.xyz/docs/supercharge)
- * [Map3 Website](https://map3.xyz)
- * [Flutter](https://docs.flutter.dev/)
-
 # Usage Example
 
 ```dart
@@ -47,3 +40,10 @@ class _MyAppState extends State<MyApp> {
   }
 }
 ```
+
+# Documentation
+
+ * [Project README](../README.md)
+ * [Map3 Supercharge Documentation](https://map3.xyz/docs/supercharge)
+ * [Map3 Website](https://map3.xyz)
+ * [Flutter](https://docs.flutter.dev/)
