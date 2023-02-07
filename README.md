@@ -3,10 +3,13 @@
 <div align='center'>The Map3 Supercharge Flutter SDK connects<br/>Android and iOS crypto apps to Wallets, Exchanges & Bridges,
 enabling<br/>cross-chain deposits and increasing volumes.</div>
 <br/>
+<span>
 [![pub](https://img.shields.io/pub/v/supercharge_flutter.svg)](https://pub.dev/packages/supercharge_flutter)
 [![points](https://img.shields.io/pub/points/supercharge_flutter)](https://pub.dev/packages/supercharge_flutter)
 [![popularity](https://img.shields.io/pub/popularity/supercharge_flutter)](https://pub.dev/packages/supercharge_flutter)
 [![likes](https://img.shields.io/pub/likes/supercharge_flutter)](https://pub.dev/packages/supercharge_flutter)
+</span>
+<br/>
 <div align="center">
 <a href="https://map3.xyz/docs/supercharge">Documentation</a> 
 <span> · </span>
