@@ -11,7 +11,6 @@ enabling<br/>cross-chain deposits and increasing volumes.</div>
 [![likes](https://img.shields.io/pub/likes/supercharge_flutter)](https://pub.dev/packages/supercharge_flutter)
 
 </div>
-<br/>
 <div align="center">
 <a href="https://map3.xyz/docs/supercharge">Documentation</a> 
 <span> · </span>
