@@ -18,14 +18,15 @@ class _MyAppState extends State<MyApp> {
     super.initState();
 
     superchargeConfig = SuperchargeConfig(
-      anonKey: 'ANON_KEY',
-      userId: 'USER_ID',
+      anonKey: 'YOUR_MAP3_ANON_KEY',
+      userId: 'YOUR_END_USER_ID',
       getDepositAddress: (coin, network) async {
-        return 'ADDRESS';
+        return 'ADDRESS'; // e.g. 0xab5801a7d398351b8be11c439e05c5b3259aec9b
       },
-      // optional parameters with their default values
+      // optional parameters with default values
       theme: 'light',
       locale: 'en',
+      // for other optional parameters see documentation: https://map3.xyz/docs/supercharge
     );
   }
 
