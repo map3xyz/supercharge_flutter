@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:supercharge_flutter/util/jwt.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -12,17 +13,12 @@ class SuperchargeView extends StatefulWidget {
   /// Model with config
   final SuperchargeConfig superchargeConfig;
 
-  /// Set to true to make the background of the InAppWebView transparent.
-  /// If your app has a dark theme,
-  /// this can prevent a white flash on initialization. The default value is false.
-  final bool transparentBackground;
   @override
   State<SuperchargeView> createState() => _SuperchargeViewState();
 
   const SuperchargeView({
     super.key,
     required this.superchargeConfig,
-    this.transparentBackground = false,
   });
 }
 
@@ -37,7 +33,7 @@ class _SuperchargeViewState extends State<SuperchargeView> {
     super.initState();
     _options = InAppWebViewGroupOptions(
       crossPlatform: InAppWebViewOptions(
-        transparentBackground: widget.transparentBackground,
+        transparentBackground: true,
         // Nice for local testing
         // clearCache: true,
         useShouldOverrideUrlLoading: true,
@@ -91,12 +87,8 @@ class _SuperchargeViewState extends State<SuperchargeView> {
   Widget build(BuildContext context) {
     return InAppWebView(
       initialUrlRequest: URLRequest(
-        url: Uri.parse(
-            'https://map3.xyz/hosted/84f0c666-7f22-4d2f-900d-dc90707e6cb0'),
-      ),
-      // initialUrlRequest: URLRequest(
-      //     url: Uri.parse(
-      //         '$map3BaseUrl/hosted/${getOrgIdFromJwt(widget.superchargeConfig.anonKey)}')),
+          url: Uri.parse(
+              '$map3BaseUrl/hosted/${getOrgIdFromJwt(widget.superchargeConfig.anonKey)}')),
       initialOptions: _options,
       onWebViewCreated: (InAppWebViewController controller) {
         _webViewController = controller;
