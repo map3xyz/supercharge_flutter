@@ -19,7 +19,7 @@ class _MyAppState extends State<MyApp> {
 
     superchargeConfig = SuperchargeConfig(
       anonKey: 'YOUR_MAP3_ANON_KEY',
-      userId: 'USER_ID',
+      userId: 'YOUR_END_USER_ID',
       options: SuperchargeConfigOptions(
         callbacks: SuperchargeConfigOptionsCallbacks(
           onAddressRequested: (coin, network) async {
