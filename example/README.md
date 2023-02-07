@@ -1,16 +1,49 @@
-# supercharge_flutter_example
+# Documentation
 
-Demonstrates how to use the supercharge_flutter plugin.
+ * [Project README](../README.md)
+ * [Map3 Supercharge Documentation](https://map3.xyz/docs/supercharge)
+ * [Map3 Website](https://map3.xyz)
+ * [Flutter](https://docs.flutter.dev/)
 
-## Getting Started
+# Usage Example
 
-This project is a starting point for a Flutter application.
+```dart
+import 'package:supercharge_flutter/supercharge.dart';
 
-A few resources to get you started if this is your first Flutter project:
+void main() => runApp(const MyApp());
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late SuperchargeConfig superchargeConfig;
+
+  @override
+  void initState() {
+    super.initState();
+
+    superchargeConfig = SuperchargeConfig(
+      anonKey: 'YOUR_MAP3_ANON_KEY',
+      userId: 'YOUR_END_USER_ID',
+      getDepositAddress: (coin, network) async {
+        return 'ADDRESS'; // e.g. 0xab5801a7d398351b8be11c439e05c5b3259aec9b
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: SuperchargeView(
+          superchargeConfig: superchargeConfig,
+        ),
+      ),
+    );
+  }
+}
+```
