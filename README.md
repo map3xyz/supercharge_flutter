@@ -44,9 +44,15 @@ flutter pub add supercharge_flutter
     superchargeConfig = SuperchargeConfig(
       anonKey: 'YOUR_MAP3_ANON_KEY',
       userId: 'YOUR_END_USER_ID',
-      getDepositAddress: (coin, network) async {
-        return 'ADDRESS'; // e.g. 0xab5801a7d398351b8be11c439e05c5b3259aec9b
-      },
+      options: SuperchargeConfigOptions(
+        callbacks: SuperchargeConfigOptionsCallbacks(
+          onAddressRequested: (coin, network) async {
+            return {
+              'address': 'ADDRESS',
+            }; // e.g. 0xab5801a7d398351b8be11c439e05c5b3259aec9b
+          },
+        ),
+      ),
     );
 ```
 
