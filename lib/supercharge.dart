@@ -266,7 +266,7 @@ class SuperchargeConfigOptionsSelection {
   final String? paymentMethod;
 
   /// You can configure the shortcut amounts users can select from on the deposit screen.
-  final List<Int>? shortcutAmounts;
+  final List<int>? shortcutAmounts;
 
   SuperchargeConfigOptionsSelection({
     this.address,
