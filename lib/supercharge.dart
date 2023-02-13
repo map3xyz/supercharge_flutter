@@ -194,7 +194,7 @@ class SuperchargeConfigOptions {
   /// Callback functions: handleAuthorizeTransaction, handleOrderFeeCalculation, onAddressRequested, onFailure, onOrderCreated, onSuccess
   final SuperchargeConfigOptionsCallbacks? callbacks;
 
-  /// Selection options: address, amount, assetId, fiat, networkCode, paymentMethod
+  /// Selection options: address, amount, assetId, fiat, networkCode, paymentMethod, shortcutAmounts
   final SuperchargeConfigOptionsSelection? selection;
 
   /// Style options: appName, colors, locale, theme
@@ -265,6 +265,9 @@ class SuperchargeConfigOptionsSelection {
   /// If not set, then the onAddressRequested callback is required.
   final String? paymentMethod;
 
+  /// You can configure the shortcut amounts users can select from on the deposit screen.
+  final List<int>? shortcutAmounts;
+
   SuperchargeConfigOptionsSelection({
     this.address,
     this.amount,
@@ -272,6 +275,7 @@ class SuperchargeConfigOptionsSelection {
     this.fiat = 'USD',
     this.networkCode,
     this.paymentMethod,
+    this.shortcutAmounts,
   });
 
   Map toJson() => {
@@ -281,6 +285,7 @@ class SuperchargeConfigOptionsSelection {
         'fiat': fiat,
         'networkCode': networkCode,
         'paymentMethod': paymentMethod,
+        'shortcutAmounts': shortcutAmounts,
       };
 }
 
