@@ -1,3 +1,7 @@
+## 0.1.4
+
+- downgrade url_launcher to 6.1.8
+
 ## 0.1.3
 
 - downgrade inappwebview to 5.6.0+2
