@@ -1,3 +1,7 @@
+## 0.1.3
+
+- downgrade inappwebview to 5.6.0+2
+
 ## 0.1.2
 
 - downgrade min dart SDK version to 2.12.0
