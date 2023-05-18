@@ -17,9 +17,9 @@ class SuperchargeView extends StatefulWidget {
   State<SuperchargeView> createState() => _SuperchargeViewState();
 
   const SuperchargeView({
-    super.key,
+    Key? key,
     required this.superchargeConfig,
-  });
+  }) : super(key: key);
 }
 
 class _SuperchargeViewState extends State<SuperchargeView> {
