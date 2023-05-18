@@ -1,3 +1,7 @@
+## 0.1.2
+
+- downgrade min dart SDK version to 2.12.0
+
 ## 0.1.1
 
 - use nested config parameters
